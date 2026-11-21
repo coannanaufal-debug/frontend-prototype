@@ -22,19 +22,19 @@ export default function PaperDetail({ paper, onClose }: PaperDetailProps) {
       <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
 
       <div className="relative ml-auto w-full max-w-2xl bg-white shadow-xl flex flex-col animate-slideIn">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">Detail Jurnal</h2>
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-900 sm:text-sm">Detail Jurnal</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 transition"
+            className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100"
             aria-label="Tutup detail"
           >
             <CloseIcon />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 reading-area">
-          <h1 className="font-reading text-2xl font-bold text-slate-900 leading-snug mb-3">{paper.title}</h1>
+        <div className="reading-area flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
+          <h1 className="mb-3 font-reading text-xl font-bold leading-snug text-slate-900 sm:text-2xl">{paper.title}</h1>
 
           <div className="flex flex-wrap gap-2 mb-4">
             {paper.authors.map((author, i) => (

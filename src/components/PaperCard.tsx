@@ -12,27 +12,29 @@ export default function PaperCard({ paper, onSelect, onAddToFolder, isActive }: 
   return (
     <article
       onClick={() => onSelect(paper)}
-      className={`bg-white border rounded-lg p-5 cursor-pointer transition-colors ${
+      className={`cursor-pointer rounded-xl border bg-white p-4 transition-colors sm:p-5 ${
         isActive
           ? 'border-accent'
           : 'border-slate-200 hover:border-slate-300'
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-reading text-lg font-bold text-slate-900 leading-snug mb-2">
+      <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+        <div className="min-w-0 flex-1">
+          <h3 className="mb-2 line-clamp-3 font-reading text-base font-bold leading-snug text-slate-900 sm:line-clamp-2 sm:text-lg">
             {paper.title}
           </h3>
-          <p className="text-sm text-slate-600 mb-3">{paper.authors.join(', ')}</p>
+          <p className="mb-3 line-clamp-1 text-xs text-slate-600 sm:text-sm">
+            {paper.authors.join(', ')}
+          </p>
 
-          <div className="flex flex-wrap gap-2 items-center text-xs text-slate-500">
-            <span className="text-slate-700">{paper.journal}</span>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-slate-500 sm:text-xs">
+            <span className="font-medium text-slate-700">{paper.journal}</span>
             <span className="text-slate-300">·</span>
             <span>{paper.year}</span>
             <span className="text-slate-300">·</span>
             <span>{paper.citations} sitasi</span>
             <span className="text-slate-300">·</span>
-            <span className={paper.openAccess ? 'text-accent font-medium' : 'text-amber-700'}>
+            <span className={paper.openAccess ? 'font-medium text-accent' : 'text-amber-700'}>
               {paper.openAccess ? 'Open Access' : 'Terbatas'}
             </span>
           </div>
@@ -42,7 +44,7 @@ export default function PaperCard({ paper, onSelect, onAddToFolder, isActive }: 
               {paper.sources.map((source) => (
                 <span
                   key={source}
-                  className="px-2 py-0.5 rounded-full border border-slate-200 text-[11px] font-medium text-slate-500 uppercase tracking-wide"
+                  className="rounded-full border border-slate-200 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-500 sm:text-[11px]"
                 >
                   {source}
                 </span>
@@ -56,10 +58,10 @@ export default function PaperCard({ paper, onSelect, onAddToFolder, isActive }: 
             e.stopPropagation()
             onAddToFolder(paper.id)
           }}
-          className="shrink-0 p-2 rounded-md border border-slate-200 text-slate-500 hover:border-accent hover:text-accent transition"
+          className="shrink-0 rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-accent hover:text-accent"
           aria-label="Simpan ke pustaka"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" />
           </svg>
         </button>

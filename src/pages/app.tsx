@@ -15,6 +15,7 @@ import { Paper, Category, Source, ReadingFolder } from '../types'
 
 export default function Home() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<Category>('all')
   const [activeSource, setActiveSource] = useState<Source | 'all'>('all')
@@ -103,7 +104,15 @@ export default function Home() {
   const latestPapers = MOCK_PAPERS.filter((p) => p.year === 2026).slice(0, 3)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-dvh overflow-hidden bg-slate-50">
+      {sidebarMobileOpen && (
+        <button
+          className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-[2px] lg:hidden"
+          onClick={() => setSidebarMobileOpen(false)}
+          aria-label="Tutup menu pustaka"
+        />
+      )}
+
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed((v) => !v)}
@@ -111,9 +120,11 @@ export default function Home() {
         activeFolder={activeFolder}
         onSelectFolder={setActiveFolder}
         onCreateFolder={handleCreateFolder}
+        mobileOpen={sidebarMobileOpen}
+        onMobileClose={() => setSidebarMobileOpen(false)}
       />
 
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex min-w-0 flex-1 flex-col">
         <SearchBar
           query={query}
           onQueryChange={setQuery}
@@ -125,16 +136,19 @@ export default function Home() {
           onSourceChange={setActiveSource}
           openAccessOnly={openAccessOnly}
           onOpenAccessChange={setOpenAccessOnly}
+          onOpenSidebar={() => setSidebarMobileOpen(true)}
         />
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 pb-28">
+        <div className="flex-1 overflow-y-auto px-4 py-5 pb-32 sm:px-6 sm:py-6 md:pb-28">
           {!isFiltered && (
             <CategoryGrid categories={CATEGORIES} onSelect={handleCategoryFromGrid} />
           )}
 
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">{feedTitle}</h2>
-            <span className="text-xs text-slate-400">{filteredPapers.length} jurnal ditemukan</span>
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <h2 className="font-reading text-xl font-bold text-slate-900 sm:text-2xl">{feedTitle}</h2>
+            <span className="shrink-0 text-[11px] text-slate-400 sm:text-xs">
+              {filteredPapers.length} jurnal ditemukan
+            </span>
           </div>
 
           <div className="space-y-3 max-w-4xl">
@@ -161,7 +175,7 @@ export default function Home() {
 
           {!isFiltered && (
             <section className="mt-10 max-w-4xl">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Terbitan Terbaru</h2>
+              <h2 className="mb-4 font-reading text-xl font-bold text-slate-900 sm:text-2xl">Terbitan Terbaru</h2>
               <div className="grid md:grid-cols-3 gap-3">
                 {latestPapers.map((paper) => (
                   <button

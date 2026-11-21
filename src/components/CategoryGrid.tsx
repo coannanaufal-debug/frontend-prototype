@@ -10,18 +10,27 @@ export default function CategoryGrid({ categories, onSelect }: CategoryGridProps
   const filtered = categories.filter((c) => c.id !== 'all')
 
   return (
-    <section className="mb-8">
-      <h2 className="text-lg font-semibold text-slate-900 mb-4">Kategori</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+    <section className="mb-6 sm:mb-8">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="font-reading text-lg font-bold text-slate-900 sm:text-xl">Kategori</h2>
+        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-slate-400">
+          Jelajahi
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
         {filtered.map((cat) => (
           <button
             key={cat.id}
             onClick={() => onSelect(cat.id)}
-            className="text-left bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition"
+            className="group rounded-xl border border-slate-200 bg-white p-3.5 text-left transition hover:border-slate-300 hover:shadow-sm sm:p-4"
           >
-            <div className="text-sm font-medium text-slate-700">{cat.label}</div>
-            <div className="mt-2 text-2xl font-serif text-slate-900">{cat.count}</div>
-            <div className="mt-1 text-xs text-slate-400">jurnal</div>
+            <div className="text-xs font-medium leading-snug text-slate-600 group-hover:text-slate-900 sm:text-sm">
+              {cat.label}
+            </div>
+            <div className="mt-3 flex items-end justify-between gap-2">
+              <div className="font-serif text-2xl text-slate-900">{cat.count}</div>
+              <span className="mb-0.5 text-[10px] text-slate-400">jurnal</span>
+            </div>
           </button>
         ))}
       </div>

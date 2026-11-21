@@ -31,18 +31,18 @@ export default function AISummaryDrawer({ paper, isOpen, onClose }: AISummaryDra
       <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
 
       <div className="relative ml-auto w-full max-w-xl bg-white shadow-xl flex flex-col animate-slideIn">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900 text-sm">Ringkasan Jurnal</h2>
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-4">
+          <h2 className="text-sm font-semibold text-slate-900">Ringkasan Jurnal</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 transition"
+            className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100"
             aria-label="Tutup ringkasan"
           >
             <CloseIcon />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5 reading-area">
+        <div className="reading-area flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:space-y-5 sm:px-6 sm:py-6">
           <div>
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jurnal yang diringkas</span>
             <h3 className="font-reading text-base font-bold text-slate-900 mt-1">{paper.title}</h3>

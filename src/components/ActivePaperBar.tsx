@@ -28,52 +28,53 @@ export default function ActivePaperBar({
   if (!paper) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-slate-200 px-6 py-3">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-        <div className="flex-1 min-w-0 flex items-center gap-3">
-          <div className="p-2 rounded-md border border-slate-200 text-slate-500">
+    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white px-3 py-2.5 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.35)] sm:px-6 sm:py-3">
+      <div className="mx-auto flex max-w-7xl flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-3">
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+          <div className="hidden rounded-md border border-slate-200 p-2 text-slate-500 sm:block">
             <DocumentIcon />
           </div>
           <div className="min-w-0">
             <h4
               onClick={onOpenDetail}
-              className="font-reading text-sm font-bold text-slate-800 truncate cursor-pointer hover:text-primary transition"
+              className="cursor-pointer truncate font-reading text-[13px] font-bold text-slate-800 transition hover:text-primary sm:text-sm"
             >
               {paper.title}
             </h4>
-            <p className="text-xs text-slate-500 truncate">
+            <p className="truncate text-[11px] text-slate-500 sm:text-xs">
               {paper.authors.join(', ')} · {paper.year}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="no-scrollbar flex shrink-0 items-center gap-2 overflow-x-auto pb-0.5">
           <button
             onClick={onOpenCitation}
-            className="px-3 py-1.5 rounded-md border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+            className="shrink-0 rounded-full border border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 sm:py-1.5"
           >
             Salin Sitasi
           </button>
 
           <button
             onClick={onOpenSummary}
-            className="px-3 py-1.5 rounded-md bg-slate-900 text-white text-xs font-medium hover:bg-slate-800 transition"
+            className="shrink-0 rounded-full bg-slate-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-800 sm:py-1.5"
           >
             Ringkasan
           </button>
 
           <button
             onClick={() => alert(`Memutar TTS untuk abstrak: "${paper.title}" (Mock Audio)`)}
-            className="px-3 py-1.5 rounded-md border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+            className="shrink-0 rounded-full border border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 sm:py-1.5"
           >
             Dengarkan
           </button>
 
           <button
             onClick={onSaveToFolder}
-            className="px-3 py-1.5 rounded-md border border-accent text-accent text-xs font-medium hover:bg-teal-50 transition"
+            className="shrink-0 rounded-full border border-accent px-3 py-2 text-xs font-medium text-accent transition hover:bg-teal-50 sm:py-1.5"
           >
-            Simpan ke Pustaka
+            <span className="sm:hidden">Simpan</span>
+            <span className="hidden sm:inline">Simpan ke Pustaka</span>
           </button>
         </div>
       </div>

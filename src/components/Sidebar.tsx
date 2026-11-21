@@ -10,12 +10,22 @@ interface SidebarProps {
   activeFolder: string | null
   onSelectFolder: (id: string | null) => void
   onCreateFolder: (name: string) => void
+  mobileOpen?: boolean
+  onMobileClose?: () => void
 }
 
 function ChevronLeft() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="m15 18-6-6 6-6" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M18 6 6 18M6 6l12 12" />
     </svg>
   )
 }
@@ -35,9 +45,12 @@ export default function Sidebar({
   activeFolder,
   onSelectFolder,
   onCreateFolder,
+  mobileOpen = false,
+  onMobileClose,
 }: SidebarProps) {
   const [showInput, setShowInput] = useState(false)
   const [newName, setNewName] = useState('')
+  const showContent = !collapsed || mobileOpen
 
   const handleCreate = () => {
     if (newName.trim()) {
@@ -47,57 +60,71 @@ export default function Sidebar({
     }
   }
 
+  const handleSelectFolder = (id: string | null) => {
+    onSelectFolder(id)
+    onMobileClose?.()
+  }
+
   return (
     <aside
-      className={`${
-        collapsed ? 'w-16' : 'w-72'
-      } transition-all duration-300 bg-white border-r border-slate-200 flex flex-col h-full shrink-0`}
+      className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 shrink-0 flex-col border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0 lg:shadow-none ${
+        mobileOpen ? 'translate-x-0' : '-translate-x-full'
+      } ${collapsed ? 'lg:w-16' : 'lg:w-72'}`}
     >
-      <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
-        {!collapsed && (
-          <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">
+      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
+        {showContent && (
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-900">
             Pustaka Riset
           </h2>
         )}
-        <button
-          onClick={onToggle}
-          className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 transition"
-          aria-label="Toggle sidebar"
-        >
-          <ChevronLeft />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onMobileClose}
+            className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 lg:hidden"
+            aria-label="Tutup sidebar"
+          >
+            <CloseIcon />
+          </button>
+          <button
+            onClick={onToggle}
+            className="hidden rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 lg:inline-flex"
+            aria-label="Toggle sidebar"
+          >
+            <ChevronLeft />
+          </button>
+        </div>
       </div>
 
-      {!collapsed && (
-        <div className="px-4 pt-4 pb-2 space-y-1">
+      {showContent && (
+        <div className="space-y-1 px-4 pb-2 pt-4">
           <button
-            onClick={() => onSelectFolder(null)}
-            className={`w-full text-left px-3 py-2 rounded-md text-sm transition ${
+            onClick={() => handleSelectFolder(null)}
+            className={`w-full rounded-md px-3 py-2 text-left text-sm transition ${
               activeFolder === null
-                ? 'bg-slate-100 text-slate-900 font-medium'
+                ? 'bg-slate-100 font-medium text-slate-900'
                 : 'text-slate-600 hover:bg-slate-50'
             }`}
           >
             Semua Jurnal
           </button>
-          <button className="w-full text-left px-3 py-2 rounded-md text-sm text-slate-600 hover:bg-slate-50 transition">
+          <button className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-600 transition hover:bg-slate-50">
             Riwayat Bacaan
           </button>
-          <button className="w-full text-left px-3 py-2 rounded-md text-sm text-slate-600 hover:bg-slate-50 transition">
+          <button className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-600 transition hover:bg-slate-50">
             Disematkan
           </button>
         </div>
       )}
 
-      {!collapsed && (
-        <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+      {showContent && (
+        <div className="flex-1 overflow-y-auto px-4 pb-4 pt-2">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
               Folder Proyek
             </span>
             <button
               onClick={() => setShowInput(true)}
-              className="text-slate-500 hover:text-slate-900 text-lg font-light leading-none"
+              className="text-lg font-light leading-none text-slate-500 hover:text-slate-900"
               aria-label="Buat folder"
             >
               +
@@ -111,12 +138,12 @@ export default function Sidebar({
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                className="flex-1 text-sm border border-slate-200 rounded-md px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="min-w-0 flex-1 rounded-md border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40"
                 placeholder="Nama folder..."
               />
               <button
                 onClick={handleCreate}
-                className="text-xs bg-primary text-white px-2 py-1.5 rounded-md hover:bg-blue-900"
+                className="rounded-md bg-primary px-2 py-1.5 text-xs text-white hover:bg-blue-900"
               >
                 OK
               </button>
@@ -127,14 +154,14 @@ export default function Sidebar({
             {folders.map((f) => (
               <button
                 key={f.id}
-                onClick={() => onSelectFolder(f.id)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition ${
+                onClick={() => handleSelectFolder(f.id)}
+                className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm transition ${
                   activeFolder === f.id
-                    ? 'bg-slate-100 text-slate-900 font-medium'
+                    ? 'bg-slate-100 font-medium text-slate-900'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                <span className="flex items-center gap-2 truncate">
+                <span className="flex min-w-0 items-center gap-2">
                   <FolderIcon />
                   <span className="truncate">{f.name}</span>
                 </span>
@@ -145,7 +172,7 @@ export default function Sidebar({
         </div>
       )}
 
-      {collapsed && (
+      {collapsed && !mobileOpen && (
         <div className="flex flex-col items-center gap-3 pt-4">
           <button
             onClick={() => onSelectFolder(null)}
