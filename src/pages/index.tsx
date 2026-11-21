@@ -1,5 +1,6 @@
 // src/pages/index.tsx — Editorial journal aggregator landing page
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { MOCK_PAPERS, SOURCES } from '../data/mockPapers'
 
 const features = [
@@ -116,6 +117,10 @@ function BookMark() {
 }
 
 export default function Home() {
+  useEffect(() => {
+    document.documentElement.classList.remove('dark')
+  }, [])
+
   return (
     <main className="min-h-screen overflow-x-hidden bg-cream text-ink">
       <header className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
