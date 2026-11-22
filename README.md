@@ -7,11 +7,12 @@ Prototype UI untuk platform agregator jurnal dari Scopus, Sinta, DOAJ, Google Sc
 - Landing page: https://frontend-prototype-gamma.vercel.app
 - Workspace: https://frontend-prototype-gamma.vercel.app/app
 
-## Tampilan
+## Tampilan & Motion
 
-- **Landing page editorial** dengan tipografi serif, aksen sage, hero bergaya rak jurnal, daftar fitur bernomor, preview workspace, dan alur kerja tiga langkah.
-- **Workspace mobile-friendly** dengan sidebar drawer, filter horizontal yang bisa digeser, kartu jurnal ringkas, dan action bar yang tetap nyaman di layar kecil.
-- **Mode gelap** untuk area kerja.
+- Landing editorial dengan tipografi serif besar, aksen amber, hero reveal, parallax, marquee sumber, dan scroll storytelling.
+- Workspace dengan filter amber, drawer melenting, pill beranimasi, toast aksi, modal/drawer motion, dan ringkasan AI mock yang “menyusun”.
+- Shortcut keyboard: `Ctrl/Cmd + K` untuk fokus pencarian, `Esc` untuk menutup overlay.
+- `prefers-reduced-motion` dihormati di seluruh animasi.
 
 ## Fitur Prototype
 
@@ -21,7 +22,7 @@ Prototype UI untuk platform agregator jurnal dari Scopus, Sinta, DOAJ, Google Sc
 - Citation tools: APA, IEEE, Chicago, Harvard, unduh `.BIB`.
 - AI summary panel (mock).
 - TTS mock untuk abstrak.
-- 3-pane workspace.
+- 3-pane workspace dan dark mode.
 
 ## Menjalankan Lokal
 

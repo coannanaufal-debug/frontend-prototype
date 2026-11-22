@@ -1,6 +1,7 @@
 // src/components/SearchBar.tsx
 import Link from 'next/link'
-import { useState } from 'react'
+import { RefObject, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Category, CategoryMeta, SourceMeta } from '../types'
 
 interface SearchBarProps {
@@ -15,6 +16,7 @@ interface SearchBarProps {
   openAccessOnly: boolean
   onOpenAccessChange: (v: boolean) => void
   onOpenSidebar?: () => void
+  inputRef?: RefObject<HTMLInputElement>
 }
 
 function MenuIcon() {
@@ -63,8 +65,10 @@ export default function SearchBar({
   openAccessOnly,
   onOpenAccessChange,
   onOpenSidebar,
+  inputRef,
 }: SearchBarProps) {
   const [dark, setDark] = useState(false)
+  const reduce = useReducedMotion()
 
   const toggleTheme = () => {
     const next = !dark
@@ -73,11 +77,17 @@ export default function SearchBar({
   }
 
   const pillClass = (active: boolean) =>
-    `shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs transition-colors sm:text-sm ${
+    `shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs sm:text-sm ${
       active
-        ? 'border-slate-900 bg-slate-900 text-white'
-        : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+        ? 'border-signal bg-signal text-ink'
+        : 'border-slate-200 bg-white text-slate-600 hover:border-amber-700/40'
     }`
+
+  const pillMotion = {
+    whileTap: reduce ? undefined : { scale: 0.94 },
+    transition: { type: 'spring' as const, stiffness: 420, damping: 24 },
+    layout: !reduce,
+  }
 
   return (
     <div className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 px-4 py-3 backdrop-blur sm:px-6 sm:py-4">
@@ -114,6 +124,7 @@ export default function SearchBar({
             <SearchIcon />
           </span>
           <input
+            ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
@@ -125,38 +136,41 @@ export default function SearchBar({
 
         <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           {categories.map((cat) => (
-            <button
+            <motion.button
               key={cat.id}
               onClick={() => onCategoryChange(cat.id)}
               className={pillClass(activeCategory === cat.id)}
+              {...pillMotion}
             >
               {cat.label}
               <span className="ml-1 text-xs opacity-70">({cat.count})</span>
-            </button>
+            </motion.button>
           ))}
         </div>
 
         <div className="no-scrollbar -mx-4 mt-2 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           {sources.map((src) => (
-            <button
+            <motion.button
               key={src.id}
               onClick={() => onSourceChange(src.id)}
               className={pillClass(activeSource === src.id)}
+              {...pillMotion}
             >
               {src.label}
               <span className="ml-1 text-xs opacity-70">({src.count})</span>
-            </button>
+            </motion.button>
           ))}
 
-          <button
+          <motion.button
             onClick={() => onOpenAccessChange(!openAccessOnly)}
             className={`${pillClass(openAccessOnly)} flex items-center gap-2`}
+            {...pillMotion}
           >
             <span
-              className={`h-2 w-2 rounded-full ${openAccessOnly ? 'bg-teal-600' : 'bg-slate-300'}`}
+              className={`h-2 w-2 rounded-full ${openAccessOnly ? 'bg-amber-700' : 'bg-slate-300'}`}
             />
             Open Access
-          </button>
+          </motion.button>
         </div>
 
         <div className="mx-auto mt-2 hidden justify-end sm:flex">

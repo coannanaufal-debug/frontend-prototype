@@ -1,4 +1,5 @@
 // src/components/ActivePaperBar.tsx
+import { motion, useReducedMotion } from 'motion/react'
 import { Paper } from '../types'
 
 interface ActivePaperBarProps {
@@ -25,10 +26,17 @@ export default function ActivePaperBar({
   onOpenDetail,
   onSaveToFolder,
 }: ActivePaperBarProps) {
+  const reduce = useReducedMotion()
+
   if (!paper) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white px-3 py-2.5 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.35)] sm:px-6 sm:py-3">
+    <motion.div
+      initial={reduce ? false : { y: 90, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white px-3 py-2.5 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.35)] sm:px-6 sm:py-3"
+    >
       <div className="mx-auto flex max-w-7xl flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-3">
         <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <div className="hidden rounded-md border border-slate-200 p-2 text-slate-500 sm:block">
@@ -71,13 +79,13 @@ export default function ActivePaperBar({
 
           <button
             onClick={onSaveToFolder}
-            className="shrink-0 rounded-full border border-accent px-3 py-2 text-xs font-medium text-accent transition hover:bg-teal-50 sm:py-1.5"
+            className="shrink-0 rounded-full border border-accent px-3 py-2 text-xs font-medium text-accent transition hover:bg-amber-50 sm:py-1.5"
           >
             <span className="sm:hidden">Simpan</span>
             <span className="hidden sm:inline">Simpan ke Pustaka</span>
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

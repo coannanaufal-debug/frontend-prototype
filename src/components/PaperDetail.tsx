@@ -1,4 +1,5 @@
 // src/components/PaperDetail.tsx
+import { motion, useReducedMotion } from 'motion/react'
 import { Paper } from '../types'
 
 interface PaperDetailProps {
@@ -15,13 +16,35 @@ function CloseIcon() {
 }
 
 export default function PaperDetail({ paper, onClose }: PaperDetailProps) {
+  const reduce = useReducedMotion()
+
   if (!paper) return null
 
   return (
-    <div className="fixed inset-0 z-40 flex">
-      <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
+    <motion.div
+      className="fixed inset-0 z-40 flex"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-slate-900/30"
+        onClick={onClose}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+      />
 
-      <div className="relative ml-auto w-full max-w-2xl bg-white shadow-xl flex flex-col animate-slideIn">
+      <motion.div
+        className="relative ml-auto flex w-full max-w-2xl flex-col bg-white shadow-xl"
+        initial={reduce ? false : { x: 60, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+        drag={reduce ? false : 'y'}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.45 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 120) onClose()
+        }}
+      >
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-4">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-900 sm:text-sm">Detail Jurnal</h2>
           <button
@@ -107,7 +130,7 @@ export default function PaperDetail({ paper, onClose }: PaperDetailProps) {
             <p className="text-xs text-slate-400 mt-1">Pratinjaman akan ditampilkan di sini.</p>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

@@ -1,17 +1,20 @@
 // src/components/CitationModal.tsx
 import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Paper } from '../types'
 
 interface CitationModalProps {
   paper: Paper | null
   onClose: () => void
+  onCopied?: () => void
 }
 
 type CitationFormat = 'apa' | 'ieee' | 'chicago' | 'harvard'
 
-export default function CitationModal({ paper, onClose }: CitationModalProps) {
+export default function CitationModal({ paper, onClose, onCopied }: CitationModalProps) {
   const [copied, setCopied] = useState(false)
   const [format, setFormat] = useState<CitationFormat>('apa')
+  const reduce = useReducedMotion()
 
   if (!paper) return null
 
@@ -26,8 +29,9 @@ export default function CitationModal({ paper, onClose }: CitationModalProps) {
   const currentCitation = citations[format]
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(currentCitation)
+    navigator.clipboard?.writeText(currentCitation).catch(() => undefined)
     setCopied(true)
+    onCopied?.()
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -42,10 +46,24 @@ export default function CitationModal({ paper, onClose }: CitationModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-slate-900/30"
+        onClick={onClose}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+      />
 
-      <div className="relative z-10 max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 shadow-xl sm:p-6">
+      <motion.div
+        className="relative z-10 max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 shadow-xl sm:p-6"
+        initial={reduce ? false : { opacity: 0, scale: 0.96, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+      >
         <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 className="text-base font-semibold text-slate-900">Sitasi Jurnal</h3>
           <button
@@ -66,7 +84,7 @@ export default function CitationModal({ paper, onClose }: CitationModalProps) {
               onClick={() => setFormat(fmt)}
               className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wide transition ${
                 format === fmt
-                  ? 'bg-slate-900 text-white'
+                  ? 'bg-ink text-cream'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -88,12 +106,12 @@ export default function CitationModal({ paper, onClose }: CitationModalProps) {
           </button>
           <button
             onClick={handleCopy}
-            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-900 sm:py-2"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:bg-amber-800 sm:py-2"
           >
             {copied ? 'Tersalin' : 'Salin ke Papan Klip'}
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

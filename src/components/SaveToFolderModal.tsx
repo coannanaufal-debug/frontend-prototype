@@ -1,4 +1,5 @@
 // src/components/SaveToFolderModal.tsx
+import { motion, useReducedMotion } from 'motion/react'
 import { ReadingFolder } from '../types'
 
 interface SaveToFolderModalProps {
@@ -16,10 +17,26 @@ function CloseIcon() {
 }
 
 export default function SaveToFolderModal({ folders, onSave, onClose }: SaveToFolderModalProps) {
+  const reduce = useReducedMotion()
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
-      <div className="relative bg-white rounded-xl max-w-sm w-full p-6 shadow-xl z-10">
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-slate-900/30"
+        onClick={onClose}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+      />
+      <motion.div
+        className="relative z-10 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+        initial={reduce ? false : { opacity: 0, scale: 0.96, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+      >
         <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
           <h3 className="font-semibold text-slate-900 text-base">Simpan ke Pustaka</h3>
           <button
@@ -36,7 +53,7 @@ export default function SaveToFolderModal({ folders, onSave, onClose }: SaveToFo
             <button
               key={folder.id}
               onClick={() => onSave(folder.id)}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm border border-slate-200 hover:border-accent hover:bg-teal-50 transition text-left"
+              className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-left text-sm transition hover:border-accent hover:bg-amber-50"
             >
               <span className="font-medium text-slate-700">{folder.name}</span>
               <span className="text-xs text-slate-400">{folder.paperIds.length} jurnal</span>
@@ -45,11 +62,11 @@ export default function SaveToFolderModal({ folders, onSave, onClose }: SaveToFo
         </div>
 
         {folders.length === 0 && (
-          <p className="text-sm text-slate-400 text-center py-4">
+          <p className="py-4 text-center text-sm text-slate-400">
             Belum ada pustaka. Buat folder baru di sidebar.
           </p>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

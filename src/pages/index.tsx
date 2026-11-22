@@ -1,7 +1,15 @@
-// src/pages/index.tsx — Editorial journal aggregator landing page
+// src/pages/index.tsx — Editorial journal aggregator landing page with motion
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+import MagneticLink from '../components/animations/MagneticLink'
+import Marquee from '../components/animations/Marquee'
+import Reveal from '../components/animations/Reveal'
 import { MOCK_PAPERS, SOURCES } from '../data/mockPapers'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const features = [
   {
@@ -117,12 +125,106 @@ function BookMark() {
 }
 
 export default function Home() {
+  const root = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     document.documentElement.classList.remove('dark')
   }, [])
 
+  useGSAP(
+    () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      timeline
+        .from('.hero-line', {
+          yPercent: 115,
+          opacity: 0,
+          duration: 1.05,
+          stagger: 0.12,
+          ease: 'power4.out',
+        })
+        .from(
+          '.hero-card',
+          {
+            y: 54,
+            opacity: 0,
+            rotate: 1.5,
+            duration: 0.9,
+            stagger: 0.12,
+          },
+          '-=0.65'
+        )
+        .from(
+          '.hero-float',
+          {
+            x: 30,
+            opacity: 0,
+            duration: 0.7,
+          },
+          '-=0.5'
+        )
+
+      gsap.to('.hero-visual', {
+        yPercent: -10,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+
+      gsap.from('.feature-row', {
+        y: 46,
+        opacity: 0,
+        duration: 0.85,
+        stagger: 0.09,
+        scrollTrigger: {
+          trigger: '.feature-list',
+          start: 'top 82%',
+        },
+      })
+
+      gsap.from('.panel', {
+        y: 54,
+        opacity: 0,
+        rotateX: -6,
+        transformOrigin: 'top center',
+        duration: 0.9,
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '.workspace-preview',
+          start: 'top 78%',
+        },
+      })
+
+      gsap.from('.step-card', {
+        y: 40,
+        scale: 0.96,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '.steps-grid',
+          start: 'top 84%',
+        },
+      })
+
+      gsap.to('.cta-ring', {
+        rotation: 360,
+        duration: 36,
+        repeat: -1,
+        ease: 'none',
+      })
+    },
+    { scope: root }
+  )
+
   return (
-    <main className="min-h-screen overflow-x-hidden bg-cream text-ink">
+    <main ref={root} className="min-h-screen overflow-x-hidden bg-cream text-ink">
       <header className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
         <Link href="/" className="flex items-center gap-3" aria-label="Jurnal Rak, kembali ke beranda">
           <span className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/15 bg-ink text-[10px] font-semibold tracking-[0.08em] text-cream">
@@ -134,40 +236,44 @@ export default function Home() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/55 md:flex">
-          <a href="#fitur" className="transition hover:text-ink">
+          <a href="#fitur" className="transition hover:text-amber-700">
             Fitur
           </a>
-          <a href="#sumber" className="transition hover:text-ink">
+          <a href="#sumber" className="transition hover:text-amber-700">
             Sumber
           </a>
-          <a href="#cara-kerja" className="transition hover:text-ink">
+          <a href="#cara-kerja" className="transition hover:text-amber-700">
             Cara kerja
           </a>
         </nav>
 
-        <Link
+        <MagneticLink
           href="/app"
-          className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-cream transition hover:bg-sage-700 sm:px-5 sm:text-[11px]"
+          className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-cream sm:px-5 sm:text-[11px]"
         >
           Buka workspace
           <ArrowUpRight className="h-3.5 w-3.5" />
-        </Link>
+        </MagneticLink>
       </header>
 
-      <section className="relative isolate overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_2%,#DCE4CD_0,transparent_46%)]" />
+      <section className="hero-section relative isolate overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_2%,#F7E7AE_0,transparent_46%)]" />
         <div className="landing-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
 
         <div className="mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-8 sm:px-8 sm:pt-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:px-10 lg:pb-24 lg:pt-16">
           <div className="max-w-2xl">
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-700">
-              <span className="h-px w-8 bg-sage-700/45" />
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700">
+              <span className="h-px w-8 bg-amber-700/45" />
               Agregator jurnal · 2026
             </div>
 
             <h1 className="text-balance font-display text-[3.45rem] leading-[0.92] tracking-[-0.02em] sm:text-7xl lg:text-[5.9rem]">
-              Semua jurnal,{' '}
-              <span className="italic text-sage-700">satu rak.</span>
+              <span className="block overflow-hidden">
+                <span className="hero-line block">Semua jurnal,</span>
+              </span>
+              <span className="block overflow-hidden">
+                <span className="hero-line block italic text-amber-700">satu rak.</span>
+              </span>
             </h1>
 
             <p className="mt-6 max-w-lg text-[15px] leading-7 text-ink/60 sm:text-base">
@@ -176,13 +282,13 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
+              <MagneticLink
                 href="/app"
-                className="group inline-flex items-center justify-center gap-3 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition hover:bg-sage-700"
+                className="group inline-flex items-center justify-center gap-3 rounded-full bg-signal px-6 py-3.5 text-sm font-semibold text-ink shadow-[0_10px_30px_-12px_rgba(180,83,9,0.6)]"
               >
                 Mulai eksplorasi
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
+              </MagneticLink>
               <a
                 href="#fitur"
                 className="inline-flex items-center justify-center rounded-full border border-ink/15 bg-paper/60 px-6 py-3.5 text-sm font-semibold text-ink transition hover:border-ink/35 hover:bg-paper"
@@ -207,11 +313,11 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="absolute -left-10 top-14 hidden h-40 w-40 rounded-full border border-sage-700/20 lg:block" />
-            <div className="absolute -right-8 bottom-16 hidden h-24 w-24 rounded-full bg-sage-200/60 blur-2xl lg:block" />
+          <div className="hero-visual relative mx-auto w-full max-w-md lg:max-w-none">
+            <div className="absolute -left-10 top-14 hidden h-40 w-40 rounded-full border border-amber-700/20 lg:block" />
+            <div className="absolute -right-8 bottom-16 hidden h-24 w-24 rounded-full bg-amber-300/50 blur-2xl lg:block" />
 
-            <div className="relative rounded-[2rem] border border-line bg-paper p-3 shadow-[0_30px_80px_-38px_rgba(29,27,22,0.55)] sm:p-4">
+            <div className="hero-card relative rounded-[2rem] border border-line bg-paper p-3 shadow-[0_30px_80px_-38px_rgba(29,27,22,0.55)] sm:p-4">
               <div className="flex items-center justify-between gap-3 border-b border-line px-2 pb-3">
                 <div className="flex gap-1.5" aria-hidden="true">
                   <span className="h-2 w-2 rounded-full bg-ink/20" />
@@ -245,7 +351,7 @@ export default function Home() {
                       {source.label}
                     </span>
                   ))}
-                  <span className="shrink-0 rounded-full border border-sage-700/25 bg-sage-50 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-sage-700">
+                  <span className="shrink-0 rounded-full border border-amber-700/25 bg-amber-300/30 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-amber-700">
                     Open Access
                   </span>
                 </div>
@@ -254,9 +360,9 @@ export default function Home() {
                   {previewPapers.map((paper, index) => (
                     <div
                       key={paper.id}
-                      className={`rounded-xl border p-3 ${
+                      className={`hero-card rounded-xl border p-3 ${
                         index === 0
-                          ? 'border-sage-700/25 bg-sage-50'
+                          ? 'border-amber-700/25 bg-amber-300/15'
                           : 'border-line bg-white/75'
                       }`}
                     >
@@ -265,7 +371,7 @@ export default function Home() {
                           {paper.journal}
                         </span>
                         {paper.openAccess && (
-                          <span className="shrink-0 rounded-full bg-sage-700 px-2 py-0.5 text-[7px] font-semibold uppercase tracking-[0.1em] text-cream">
+                          <span className="shrink-0 rounded-full bg-amber-700 px-2 py-0.5 text-[7px] font-semibold uppercase tracking-[0.1em] text-cream">
                             Open access
                           </span>
                         )}
@@ -281,20 +387,20 @@ export default function Home() {
                   ))}
                 </div>
 
-                <div className="mt-3 flex items-center justify-between rounded-xl border border-line bg-white/55 px-3 py-2.5">
+                <div className="hero-card mt-3 flex items-center justify-between rounded-xl border border-line bg-white/55 px-3 py-2.5">
                   <div className="flex items-center gap-2 text-[10px] font-medium text-ink/55">
                     <BookMark />
                     Ringkasan jurnal
                   </div>
-                  <span className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-sage-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-sage-700" />
+                  <span className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-amber-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-700" />
                     Siap dibaca
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="absolute -bottom-5 right-4 rotate-2 rounded-2xl border border-line bg-cream px-4 py-3 shadow-sm sm:right-8">
+            <div className="hero-float absolute -bottom-5 right-4 rotate-2 rounded-2xl border border-line bg-cream px-4 py-3 shadow-sm sm:right-8">
               <div className="text-[8px] font-semibold uppercase tracking-[0.2em] text-ink/35">
                 Folder riset
               </div>
@@ -305,43 +411,50 @@ export default function Home() {
       </section>
 
       <section id="sumber" className="border-y border-line bg-paper/65">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-ink/40">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 sm:px-8 lg:flex-row lg:items-center lg:gap-8 lg:px-10">
+          <p className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.24em] text-ink/40">
             Sumber terindeks
           </p>
-          <div className="no-scrollbar flex items-center gap-6 overflow-x-auto text-sm font-semibold text-ink/60 sm:gap-8">
+          <Marquee className="min-w-0 flex-1">
             {indexedSources.map((source) => (
-              <span key={source.id} className="whitespace-nowrap">
+              <span
+                key={source.id}
+                className="mx-6 whitespace-nowrap text-sm font-semibold text-ink/60"
+              >
                 {source.label}
                 <sup className="ml-1 text-[9px] font-medium text-ink/30">{source.count}</sup>
               </span>
             ))}
-            <span className="whitespace-nowrap text-sage-700">+ Open Access</span>
-          </div>
+            <span className="mx-6 whitespace-nowrap text-sm font-semibold text-amber-700">
+              + Open Access
+            </span>
+          </Marquee>
         </div>
       </section>
 
       <section id="fitur" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div className="lg:sticky lg:top-10 lg:self-start">
-            <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-700">
-              <span className="h-px w-8 bg-sage-700/45" />
-              01 / Fitur
-            </div>
-            <h2 className="mt-5 text-balance font-display text-4xl leading-[0.96] sm:text-5xl lg:text-6xl">
-              Alat riset yang tidak <span className="italic text-sage-700">berisik.</span>
-            </h2>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-ink/55">
-              Setiap fitur dibuat untuk satu tujuan: mengurangi langkah antara menemukan jurnal
-              dan memahaminya.
-            </p>
+            <Reveal>
+              <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700">
+                <span className="h-px w-8 bg-amber-700/45" />
+                01 / Fitur
+              </div>
+              <h2 className="mt-5 text-balance font-display text-4xl leading-[0.96] sm:text-5xl lg:text-6xl">
+                Alat riset yang tidak <span className="italic text-amber-700">berisik.</span>
+              </h2>
+              <p className="mt-5 max-w-sm text-sm leading-7 text-ink/55">
+                Setiap fitur dibuat untuk satu tujuan: mengurangi langkah antara menemukan jurnal
+                dan memahaminya.
+              </p>
+            </Reveal>
           </div>
 
-          <div className="border-t border-line">
+          <div className="feature-list border-t border-line">
             {features.map((feature, index) => (
               <article
                 key={feature.title}
-                className="group grid grid-cols-[2.25rem_1fr] gap-3 border-b border-line py-5 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7"
+                className="feature-row group grid grid-cols-[2.25rem_1fr] gap-3 border-b border-line py-5 hover:bg-amber-300/10 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7"
               >
                 <span className="pt-1 text-[10px] font-semibold tracking-[0.12em] text-ink/30">
                   0{index + 1}
@@ -357,7 +470,7 @@ export default function Home() {
                     {feature.description}
                   </p>
                 </div>
-                <span className="hidden self-start pt-2 text-ink/20 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-sage-700 sm:block">
+                <span className="hidden self-start pt-2 text-ink/20 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-700 sm:block">
                   <ArrowUpRight />
                 </span>
               </article>
@@ -367,44 +480,46 @@ export default function Home() {
       </section>
 
       <section className="bg-ink text-cream">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
+        <div className="workspace-preview mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
             <div>
-              <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-200">
-                <span className="h-px w-8 bg-sage-200/45" />
-                02 / Workspace
-              </div>
-              <h2 className="mt-5 text-balance font-display text-4xl leading-[0.96] sm:text-5xl lg:text-6xl">
-                Satu layar untuk <span className="italic text-sage-200">seluruh alur.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-sm leading-7 text-cream/55">
-                Pencarian, pustaka, detail jurnal, sitasi, dan ringkasan bekerja dalam satu ruang
-                kerja. Tanpa pindah tab, tanpa kehilangan konteks.
-              </p>
+              <Reveal>
+                <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-signal">
+                  <span className="h-px w-8 bg-signal/50" />
+                  02 / Workspace
+                </div>
+                <h2 className="mt-5 text-balance font-display text-4xl leading-[0.96] sm:text-5xl lg:text-6xl">
+                  Satu layar untuk <span className="italic text-signal">seluruh alur.</span>
+                </h2>
+                <p className="mt-5 max-w-md text-sm leading-7 text-cream/55">
+                  Pencarian, pustaka, detail jurnal, sitasi, dan ringkasan bekerja dalam satu ruang
+                  kerja. Tanpa pindah tab, tanpa kehilangan konteks.
+                </p>
 
-              <div className="mt-8 flex flex-wrap gap-2">
-                {['Cari', 'Saring', 'Simpan', 'Sitasi', 'Ringkas'].map((step) => (
-                  <span
-                    key={step}
-                    className="rounded-full border border-cream/15 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-cream/55"
-                  >
-                    {step}
-                  </span>
-                ))}
-              </div>
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {['Cari', 'Saring', 'Simpan', 'Sitasi', 'Ringkas'].map((step) => (
+                    <span
+                      key={step}
+                      className="rounded-full border border-cream/15 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-cream/55"
+                    >
+                      {step}
+                    </span>
+                  ))}
+                </div>
 
-              <Link
-                href="/app"
-                className="mt-8 inline-flex items-center gap-3 rounded-full bg-sage-200 px-5 py-3 text-sm font-semibold text-sage-900 transition hover:bg-cream"
-              >
-                Buka workspace
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
+                <MagneticLink
+                  href="/app"
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-signal px-5 py-3 text-sm font-semibold text-ink transition hover:bg-amber-300"
+                >
+                  Buka workspace
+                  <ArrowUpRight className="h-4 w-4" />
+                </MagneticLink>
+              </Reveal>
             </div>
 
             <div className="rounded-2xl border border-cream/10 bg-cream/[0.04] p-2.5 sm:p-3">
               <div className="grid gap-2 sm:grid-cols-[0.8fr_1.4fr]">
-                <div className="rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
+                <div className="panel rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
                   <div className="text-[8px] font-semibold uppercase tracking-[0.2em] text-cream/30">
                     Pustaka
                   </div>
@@ -432,7 +547,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
+                <div className="panel rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
                   <div className="flex items-center justify-between text-[8px] font-semibold uppercase tracking-[0.2em] text-cream/30">
                     <span>Hasil pencarian</span>
                     <span>6 jurnal</span>
@@ -459,12 +574,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="mt-2 rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
+              <div className="panel mt-2 rounded-xl border border-cream/10 bg-cream/[0.05] p-3">
                 <div className="flex items-center justify-between">
                   <div className="text-[8px] font-semibold uppercase tracking-[0.2em] text-cream/30">
                     Ringkasan AI
                   </div>
-                  <span className="rounded-full bg-sage-200 px-2 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-sage-900">
+                  <span className="rounded-full bg-signal px-2 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-ink">
                     Mock
                   </span>
                 </div>
@@ -488,26 +603,23 @@ export default function Home() {
 
       <section id="cara-kerja" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-700">
-              <span className="h-px w-8 bg-sage-700/45" />
+          <Reveal>
+            <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700">
+              <span className="h-px w-8 bg-amber-700/45" />
               03 / Cara kerja
             </div>
             <h2 className="mt-5 text-balance font-display text-4xl leading-[0.96] sm:text-5xl lg:text-6xl">
-              Tiga langkah, <span className="italic text-sage-700">tanpa drama.</span>
+              Tiga langkah, <span className="italic text-amber-700">tanpa drama.</span>
             </h2>
-          </div>
+          </Reveal>
           <p className="max-w-xs text-sm leading-7 text-ink/55">
             Dari kata kunci pertama sampai ringkasan yang siap dibaca.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-3 md:gap-6">
+        <div className="steps-grid mt-12 grid gap-4 md:grid-cols-3 md:gap-6">
           {steps.map((step, index) => (
-            <div
-              key={step.title}
-              className="relative rounded-2xl border border-line bg-paper p-6"
-            >
+            <div key={step.title} className="step-card relative rounded-2xl border border-line bg-paper p-6">
               <span className="text-[10px] font-semibold tracking-[0.14em] text-ink/30">
                 0{index + 1}
               </span>
@@ -525,10 +637,10 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-10 lg:pb-28">
         <div className="relative overflow-hidden rounded-[2rem] bg-sage-100 px-6 py-12 sm:px-12 sm:py-20">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-sage-700/15" />
-          <div className="absolute -bottom-28 -right-10 h-72 w-72 rounded-full border border-sage-700/10" />
+          <div className="cta-ring absolute -right-20 -top-20 h-64 w-64 rounded-full border border-amber-700/20" />
+          <div className="absolute -bottom-28 -right-10 h-72 w-72 rounded-full border border-amber-700/10" />
           <div className="relative max-w-2xl">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-700">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700">
               Pustaka riset Anda
             </p>
             <h2 className="mt-4 text-balance font-display text-4xl leading-[0.95] sm:text-5xl lg:text-6xl">
@@ -536,16 +648,16 @@ export default function Home() {
               <span className="italic">Sisanya akan mengalir.</span>
             </h2>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
+              <MagneticLink
                 href="/app"
-                className="inline-flex items-center justify-center gap-3 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-cream transition hover:bg-sage-700"
+                className="inline-flex items-center justify-center gap-3 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-cream"
               >
                 Masuk ke workspace
                 <ArrowUpRight className="h-4 w-4" />
-              </Link>
+              </MagneticLink>
               <a
                 href="#fitur"
-                className="inline-flex items-center justify-center rounded-full border border-sage-700/20 bg-cream/40 px-6 py-3.5 text-sm font-semibold text-sage-900 transition hover:bg-cream/70"
+                className="inline-flex items-center justify-center rounded-full border border-amber-700/20 bg-cream/40 px-6 py-3.5 text-sm font-semibold text-amber-700 transition hover:bg-cream/70"
               >
                 Pelajari fitur
               </a>
@@ -565,13 +677,13 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-medium text-ink/50">
-            <a href="#fitur" className="transition hover:text-ink">
+            <a href="#fitur" className="transition hover:text-amber-700">
               Fitur
             </a>
-            <a href="#sumber" className="transition hover:text-ink">
+            <a href="#sumber" className="transition hover:text-amber-700">
               Sumber
             </a>
-            <Link href="/app" className="transition hover:text-ink">
+            <Link href="/app" className="transition hover:text-amber-700">
               Workspace
             </Link>
           </div>

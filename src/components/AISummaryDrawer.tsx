@@ -1,4 +1,6 @@
 // src/components/AISummaryDrawer.tsx
+import { useEffect, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Paper } from '../types'
 import { AI_SUMMARIES } from '../data/mockPapers'
 
@@ -17,6 +19,19 @@ function CloseIcon() {
 }
 
 export default function AISummaryDrawer({ paper, isOpen, onClose }: AISummaryDrawerProps) {
+  const [loading, setLoading] = useState(true)
+  const reduce = useReducedMotion()
+
+  useEffect(() => {
+    if (!isOpen || !paper || reduce) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    const timer = setTimeout(() => setLoading(false), 720)
+    return () => clearTimeout(timer)
+  }, [isOpen, paper?.id, reduce])
+
   if (!isOpen || !paper) return null
 
   const summary = AI_SUMMARIES[paper.id] || {
@@ -27,10 +42,30 @@ export default function AISummaryDrawer({ paper, isOpen, onClose }: AISummaryDra
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      <div className="absolute inset-0 bg-slate-900/30" onClick={onClose} />
+    <motion.div
+      className="fixed inset-0 z-50 flex"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-slate-900/30"
+        onClick={onClose}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+      />
 
-      <div className="relative ml-auto w-full max-w-xl bg-white shadow-xl flex flex-col animate-slideIn">
+      <motion.div
+        className="relative ml-auto flex w-full max-w-xl flex-col bg-white shadow-xl"
+        initial={reduce ? false : { x: 60, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+        drag={reduce ? false : 'y'}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.45 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 120) onClose()
+        }}
+      >
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-4">
           <h2 className="text-sm font-semibold text-slate-900">Ringkasan Jurnal</h2>
           <button
@@ -51,47 +86,72 @@ export default function AISummaryDrawer({ paper, isOpen, onClose }: AISummaryDra
             </p>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Latar Belakang</h4>
-            <p className="text-sm text-slate-700 leading-relaxed">{summary.background}</p>
-          </div>
-
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Metode Penelitian</h4>
-            <p className="text-sm text-slate-700 leading-relaxed">{summary.method}</p>
-          </div>
-
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Hasil Penelitian</h4>
-            <p className="text-sm text-slate-700 leading-relaxed">{summary.results}</p>
-          </div>
-
-          <div>
-            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Kata Kunci</h4>
-            <div className="flex flex-wrap gap-1.5">
-              {summary.keywords.map((keyword, i) => (
-                <span
+          {loading ? (
+            <div className="space-y-3 pt-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-700">
+                Menyusun ringkasan…
+              </p>
+              {[0, 1, 2].map((i) => (
+                <motion.div
                   key={i}
-                  className="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-medium"
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+                  animate={reduce ? undefined : { opacity: [0.55, 1, 0.55] }}
+                  transition={{ duration: 1.25, repeat: Infinity, delay: i * 0.16 }}
                 >
-                  {keyword}
-                </span>
+                  <div className="mb-3 h-2 w-24 rounded-full bg-slate-200" />
+                  <div className="space-y-2">
+                    <div className="h-2 w-full rounded-full bg-slate-200" />
+                    <div className="h-2 w-11/12 rounded-full bg-slate-200" />
+                    <div className="h-2 w-3/5 rounded-full bg-slate-200" />
+                  </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-700">Latar Belakang</h4>
+                <p className="text-sm leading-relaxed text-slate-700">{summary.background}</p>
+              </div>
 
-          <div className="border border-slate-200 rounded-lg p-4 bg-white">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Premium</span>
-            <h5 className="font-semibold text-slate-800 text-sm mt-1">Matriks Perbandingan Jurnal</h5>
-            <p className="text-xs text-slate-500 mt-1 mb-3">
-              Bandingkan metodologi, sampel data, dan keterbatasan beberapa jurnal sekaligus.
-            </p>
-            <button className="bg-slate-900 text-white text-xs px-4 py-2 rounded-md font-medium hover:bg-slate-800 transition">
-              Lihat Matriks
-            </button>
-          </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-700">Metode Penelitian</h4>
+                <p className="text-sm leading-relaxed text-slate-700">{summary.method}</p>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-700">Hasil Penelitian</h4>
+                <p className="text-sm leading-relaxed text-slate-700">{summary.results}</p>
+              </div>
+
+              <div>
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Kata Kunci</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {summary.keywords.map((keyword, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">Premium</span>
+                <h5 className="mt-1 text-sm font-semibold text-slate-800">Matriks Perbandingan Jurnal</h5>
+                <p className="mb-3 mt-1 text-xs text-slate-500">
+                  Bandingkan metodologi, sampel data, dan keterbatasan beberapa jurnal sekaligus.
+                </p>
+                <button className="rounded-md bg-ink px-4 py-2 text-xs font-medium text-cream transition hover:bg-slate-800">
+                  Lihat Matriks
+                </button>
+              </div>
+            </>
+          )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

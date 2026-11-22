@@ -1,5 +1,7 @@
-// src/pages/index.tsx — 3-Pane Academic Workspace Prototype
-import { useMemo, useState } from 'react'
+// src/pages/app.tsx — 3-Pane Academic Workspace Prototype
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import Toast from '../components/animations/Toast'
 import Sidebar from '../components/Sidebar'
 import SearchBar from '../components/SearchBar'
 import CategoryGrid from '../components/CategoryGrid'
@@ -28,6 +30,40 @@ export default function Home() {
   const [citationOpen, setCitationOpen] = useState(false)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
+
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+
+  const flashToast = (message: string) => {
+    setToast(message)
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast(null), 2200)
+  }
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        searchInputRef.current?.focus()
+      }
+      if (event.key === 'Escape') {
+        setCitationOpen(false)
+        setSummaryOpen(false)
+        setSaveModalOpen(false)
+        setDetailOpen(false)
+        setSidebarMobileOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current)
+    }
+  }, [])
 
   const filteredPapers = useMemo(() => {
     let result = MOCK_PAPERS
@@ -83,6 +119,7 @@ export default function Home() {
       )
     )
     setSaveModalOpen(false)
+    flashToast('Jurnal disimpan ke pustaka')
   }
 
   const handleCategoryFromGrid = (id: string) => {
@@ -105,13 +142,19 @@ export default function Home() {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-slate-50">
-      {sidebarMobileOpen && (
-        <button
-          className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-[2px] lg:hidden"
-          onClick={() => setSidebarMobileOpen(false)}
-          aria-label="Tutup menu pustaka"
-        />
-      )}
+      <AnimatePresence>
+        {sidebarMobileOpen && (
+          <motion.button
+            key="sidebar-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-[2px] lg:hidden"
+            onClick={() => setSidebarMobileOpen(false)}
+            aria-label="Tutup menu pustaka"
+          />
+        )}
+      </AnimatePresence>
 
       <Sidebar
         collapsed={sidebarCollapsed}
@@ -137,6 +180,7 @@ export default function Home() {
           openAccessOnly={openAccessOnly}
           onOpenAccessChange={setOpenAccessOnly}
           onOpenSidebar={() => setSidebarMobileOpen(true)}
+          inputRef={searchInputRef}
         />
 
         <div className="flex-1 overflow-y-auto px-4 py-5 pb-32 sm:px-6 sm:py-6 md:pb-28">
@@ -205,11 +249,18 @@ export default function Home() {
       />
 
       {detailOpen && <PaperDetail paper={activePaper} onClose={() => setDetailOpen(false)} />}
-      {citationOpen && <CitationModal paper={activePaper} onClose={() => setCitationOpen(false)} />}
+      {citationOpen && (
+        <CitationModal
+          paper={activePaper}
+          onClose={() => setCitationOpen(false)}
+          onCopied={() => flashToast('Sitasi tersalin ke papan klip')}
+        />
+      )}
       {summaryOpen && <AISummaryDrawer paper={activePaper} isOpen={summaryOpen} onClose={() => setSummaryOpen(false)} />}
       {saveModalOpen && (
         <SaveToFolderModal folders={folders} onSave={handleSaveToFolder} onClose={() => setSaveModalOpen(false)} />
       )}
+      <Toast message={toast} />
     </div>
   )
 }
