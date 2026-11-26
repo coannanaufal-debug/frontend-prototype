@@ -1,12 +1,13 @@
 // src/pages/index.tsx — Editorial journal aggregator landing page with motion
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import MagneticLink from '../components/animations/MagneticLink'
 import Marquee from '../components/animations/Marquee'
 import Reveal from '../components/animations/Reveal'
+import HeroStage from '../components/three/HeroStage'
 import { MOCK_PAPERS, SOURCES } from '../data/mockPapers'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -126,6 +127,7 @@ function BookMark() {
 
 export default function Home() {
   const root = useRef<HTMLDivElement>(null)
+  const [, setStageReady] = useState(false)
 
   useEffect(() => {
     document.documentElement.classList.remove('dark')
@@ -317,6 +319,7 @@ export default function Home() {
             <div className="absolute -left-10 top-14 hidden h-40 w-40 rounded-full border border-amber-700/20 lg:block" />
             <div className="absolute -right-8 bottom-16 hidden h-24 w-24 rounded-full bg-amber-300/50 blur-2xl lg:block" />
 
+            <div className="sr-only">
             <div className="hero-card relative rounded-[2rem] border border-line bg-paper p-3 shadow-[0_30px_80px_-38px_rgba(29,27,22,0.55)] sm:p-4">
               <div className="flex items-center justify-between gap-3 border-b border-line px-2 pb-3">
                 <div className="flex gap-1.5" aria-hidden="true">
@@ -358,9 +361,10 @@ export default function Home() {
 
                 <div className="mt-4 space-y-2">
                   {previewPapers.map((paper, index) => (
-                    <div
+                    <Link
                       key={paper.id}
-                      className={`hero-card rounded-xl border p-3 ${
+                      href={`/app?paper=${paper.id}`}
+                      className={`hero-card block rounded-xl border p-3 transition hover:border-amber-700/40 ${
                         index === 0
                           ? 'border-amber-700/25 bg-amber-300/15'
                           : 'border-line bg-white/75'
@@ -383,7 +387,7 @@ export default function Home() {
                         <span className="truncate">{paper.authors[0]} et al.</span>
                         <span>{paper.year}</span>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
 
@@ -399,6 +403,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            </div>
 
             <div className="hero-float absolute -bottom-5 right-4 rotate-2 rounded-2xl border border-line bg-cream px-4 py-3 shadow-sm sm:right-8">
               <div className="text-[8px] font-semibold uppercase tracking-[0.2em] text-ink/35">
@@ -406,6 +411,8 @@ export default function Home() {
               </div>
               <div className="mt-1 text-xs font-semibold text-ink">Bab 2 · Variabel X</div>
             </div>
+
+            <HeroStage onReady={setStageReady} />
           </div>
         </div>
       </section>

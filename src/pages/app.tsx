@@ -1,5 +1,6 @@
 // src/pages/app.tsx — 3-Pane Academic Workspace Prototype
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
 import { AnimatePresence, motion } from 'motion/react'
 import Toast from '../components/animations/Toast'
 import Sidebar from '../components/Sidebar'
@@ -30,6 +31,23 @@ export default function Home() {
   const [citationOpen, setCitationOpen] = useState(false)
   const [summaryOpen, setSummaryOpen] = useState(false)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
+
+  // Deep link from the landing page's 3D cards: /app?paper=p1
+  const router = useRouter()
+  const linkedPaperId =
+    typeof router.query.paper === 'string'
+      ? router.query.paper
+      : Array.isArray(router.query.paper)
+      ? router.query.paper[0]
+      : null
+
+  useEffect(() => {
+    if (!router.isReady || !linkedPaperId) return
+    const paper = MOCK_PAPERS.find((item) => item.id === linkedPaperId)
+    if (!paper) return
+    setActivePaper(paper)
+    setDetailOpen(true)
+  }, [router.isReady, linkedPaperId])
 
   const searchInputRef = useRef<HTMLInputElement>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)

@@ -1,0 +1,74 @@
+/* Color · Light */
+:root {
+  --canvas: #F7F2E7;
+  --paper: #FDFBF5;
+  --raised: #FFFFFF;
+  --border: #DED6C3;
+  --text-primary: #17150F;
+  --text-secondary: #4E483B;
+  --text-muted: #6B6455;
+  --accent-signal: #F5C542;
+  --accent-deep: #A34A07;
+  --accent-soft: #F7E7AE;
+  --surface-sage: #E4E8D7;
+  --text-sage: #2C3324;
+  --surface-dark: #17150F;
+  --text-ondark: #F7F2E7;
+  --line-ondark: #3A3529;
+  --scrim: rgba(23, 21, 15, 0.60);
+  --on-signal: #17150F;
+  --white: #FFFFFF;
+}
+/* Color · Dark */
+[data-color="Dark"] {
+  --canvas: #17150F;
+  --paper: #201E17;
+  --raised: #2A271D;
+  --border: #3B372B;
+  --text-primary: #F7F2E7;
+  --text-secondary: #CFC6B0;
+  --text-muted: #AFA692;
+  --accent-signal: #F5C542;
+  --accent-deep: #E9B949;
+  --accent-soft: #4A3A12;
+  --surface-sage: #2C3324;
+  --text-sage: #B4BD97;
+  --surface-dark: #0E0D0A;
+  --text-ondark: #F7F2E7;
+  --line-ondark: #2E2A20;
+  --scrim: rgba(0, 0, 0, 0.70);
+  --on-signal: #17150F;
+  --white: #FFFFFF;
+}
+/* Scale · Base */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+}
+/* Type · Base */
+:root {
+  --size-hero: 88px;
+  --size-section: 56px;
+  --size-sub: 32px;
+  --size-body: 15px;
+  --size-label: 11px;
+  --size-micro: 9px;
+  --lh-hero: 88px;
+  --lh-section: 58px;
+  --lh-body: 24px;
+  --family-display: "Instrument Serif";
+  --family-ui: "Plus Jakarta Sans";
+}

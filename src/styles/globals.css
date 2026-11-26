@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1E3A8A;
-  --accent: #0D9488;
+  --primary: #A34A07;
+  --accent: #A34A07;
   --surface: #F8FAFC;
   --bg-dark: #0F172A;
   --bg-dark-panel: #1E293B;
